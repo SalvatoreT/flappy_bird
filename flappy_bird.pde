@@ -12,9 +12,13 @@ void setup() {
 void draw() {
     // Draw the scene
     image(scene, 0, -50, width, height);
+
+    // Update the environment
     bird.update();
+    ground.update();
+
+    // Draw the assets
     bird.draw();
-    // Draw the ground
     ground.draw();
 }
 
@@ -65,19 +69,45 @@ public class Bird {
     public void click() {
         yVelocity = flapVelocity;
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getWidth() {
+        return up.width;
+    }
+
+    public float getHeight() {
+        return up.height;
+    }
 }
 
 public class Ground {
     PImage img;
-    int tick = 0;
+    float tick = 0;
+    float speed = 1;
+    float y;
 
     public Ground() {
         img = loadImage("assets/Ground.png");
+        y = height - img.height;
     }
 
     public void draw() {
-        image(img, (0 - tick) % img.width, height - img.height);
-        image(img, (0 - tick) % img.width + img.width, height - img.height);
-        tick += 1;
+        image(img, (0 - tick) % img.width, y);
+        image(img, (0 - tick) % img.width + img.width, y);
+        tick += speed;
+    }
+
+    public void update() {
+        if(bird.getY() + bird.getHeight() >= y) {
+            bird.kill();
+            speed = 0;
+        }
     }
 }
