@@ -1,32 +1,43 @@
 PImage scene;
-PImage ground;
 Bird bird;
+Ground ground;
 
 void setup() {
     size(288, 511-50);
     scene = loadImage("assets/Day Background.png");
-    ground = loadImage("assets/Ground.png");
-    bird = new Bird();
+    bird = new Bird(width/5, height/3);
+    ground = new Ground();
 }
 
-int tick = 0;
 void draw() {
+    // Draw the scene
     image(scene, 0, -50, width, height);
+    bird.update();
     bird.draw();
-    image(ground, (0 - tick) % ground.width, height - ground.height);
-    image(ground, (0 - tick) % ground.width + ground.width, height - ground.height);
-    tick += 1;
+    // Draw the ground
+    ground.draw();
+}
+
+void mousePressed() {
+    bird.click();
 }
 
 public class Bird {
-    PImage up;
-    PImage middle;
-    PImage down;
+    PImage up, middle, down;
     PImage[] imageStates;
+    float x, y;
     float flapProgress;
     float flapSpeed = 0.2;
+    float yVelocity;
+    float yAcceleration;
+    float flapVelocity;
 
-    public Bird() {
+    public Bird(float x, float y) {
+        this.x = x;
+        this.y = y;
+        yVelocity = 0;
+        yAcceleration = 0.2;
+        flapVelocity = -4;
         up = loadImage("assets/Purple Up.png");
         middle = loadImage("assets/Purple Middle.png");
         down = loadImage("assets/Purple Down.png");
@@ -35,7 +46,38 @@ public class Bird {
     }
 
     public void draw() {
-        image(imageStates[floor(flapProgress)], 100, 100);
+        image(imageStates[floor(flapProgress)], x, y);
         flapProgress = (flapProgress + flapSpeed) % 4;
+    }
+
+    public void kill() {
+        flapSpeed = 0;
+        yVelocity = 0;
+        yAcceleration = 0;
+        flapVelocity = 0;
+    }
+
+    public void update() {
+        y += yVelocity;
+        yVelocity += yAcceleration;
+    }
+
+    public void click() {
+        yVelocity = flapVelocity;
+    }
+}
+
+public class Ground {
+    PImage img;
+    int tick = 0;
+
+    public Ground() {
+        img = loadImage("assets/Ground.png");
+    }
+
+    public void draw() {
+        image(img, (0 - tick) % img.width, height - img.height);
+        image(img, (0 - tick) % img.width + img.width, height - img.height);
+        tick += 1;
     }
 }
