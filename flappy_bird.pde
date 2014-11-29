@@ -1,12 +1,11 @@
 PImage scene;
 Bird bird;
-Ground ground;
+Environment environment;
 
 void setup() {
     size(288, 511-50);
     scene = loadImage("assets/Day Background.png");
-    bird = new Bird(width/5, height/3);
-    ground = new Ground();
+    initialize();
 }
 
 void draw() {
@@ -15,15 +14,28 @@ void draw() {
 
     // Update the environment
     bird.update();
-    ground.update();
+    environment.update();
 
     // Draw the assets
+    environment.draw();
     bird.draw();
-    ground.draw();
+
+    if(bird.isDead()) {
+        initialize();
+    }
 }
 
 void mousePressed() {
     bird.click();
+}
+
+void keyPressed() {
+    bird.click();
+}
+
+void initialize() {
+    bird = new Bird(width/5, height/3);
+    environment = new Environment();
 }
 
 public class Bird {
@@ -61,6 +73,8 @@ public class Bird {
         flapVelocity = 0;
     }
 
+    public boolean isDead() { return flapSpeed == 0.0; }
+
     public void update() {
         y += yVelocity;
         yVelocity += yAcceleration;
@@ -84,30 +98,5 @@ public class Bird {
 
     public float getHeight() {
         return up.height;
-    }
-}
-
-public class Ground {
-    PImage img;
-    float tick = 0;
-    float speed = 1;
-    float y;
-
-    public Ground() {
-        img = loadImage("assets/Ground.png");
-        y = height - img.height;
-    }
-
-    public void draw() {
-        image(img, (0 - tick) % img.width, y);
-        image(img, (0 - tick) % img.width + img.width, y);
-        tick += speed;
-    }
-
-    public void update() {
-        if(bird.getY() + bird.getHeight() >= y) {
-            bird.kill();
-            speed = 0;
-        }
     }
 }
