@@ -3,7 +3,7 @@ Bird bird;
 Environment environment;
 
 void setup() {
-    size(288, 511-50);
+    size(288, 511);
     scene = loadImage("assets/Day Background.png");
     initialize();
 }

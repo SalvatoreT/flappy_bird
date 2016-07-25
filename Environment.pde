@@ -5,6 +5,8 @@ public class Environment {
   Tube tubeB;
   float tick = 0;
   float speed = 1;
+  int tubesPassed = 0;
+  PFont font;
 
   public Environment() {
     ground = new Ground();
@@ -62,7 +64,12 @@ public class Environment {
       if(inside && !between) {
         bird.kill();
         speed = 0;
+        tubesPassed = 0;
       }
+      if(inside && between) {
+        tubesPassed ++;
+      }
+
     }
   }
 
@@ -87,11 +94,17 @@ public class Environment {
       if(bird.getY() + bird.getHeight() >= y) {
         bird.kill();
         speed = 0;
+        tubesPassed = 0;
       }
       if(bird.getY() < 0) {
         bird.kill();
         speed = 0;
+        tubesPassed = 0;
       }
+      font = loadFont("CalistoMT-32.vlw");
+      textFont(font);
+      text(tubesPassed/85,10,30);
+      fill(255,255,255);
     }
   }
 }
